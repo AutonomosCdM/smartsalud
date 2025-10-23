@@ -6,7 +6,7 @@ Used for injecting database sessions, services, etc. into route handlers.
 from typing import AsyncGenerator
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.database.connection import get_session
+from src.database.connection import get_session_factory
 
 
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
@@ -18,5 +18,6 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
         async def endpoint(db: AsyncSession = Depends(get_db)):
             ...
     """
-    async with get_session() as session:
+    session_factory = get_session_factory()
+    async with session_factory() as session:
         yield session

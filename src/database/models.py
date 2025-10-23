@@ -37,7 +37,7 @@ class Patient(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     rut: Mapped[str] = mapped_column(String(12), unique=True, nullable=False, index=True)
-    phone: Mapped[str] = mapped_column(String(20), unique=True, nullable=False, index=True)
+    phone: Mapped[str] = mapped_column(String(30), unique=True, nullable=False, index=True)
     first_name: Mapped[str] = mapped_column(String(100), nullable=False)
     last_name: Mapped[str] = mapped_column(String(100), nullable=False)
     email: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
@@ -155,8 +155,8 @@ class Interaction(Base):
         nullable=True,
         index=True
     )
-    message_from: Mapped[str] = mapped_column(String(20), nullable=False)
-    message_to: Mapped[str] = mapped_column(String(20), nullable=False)
+    message_from: Mapped[str] = mapped_column(String(30), nullable=False)
+    message_to: Mapped[str] = mapped_column(String(30), nullable=False)
     message_body: Mapped[str] = mapped_column(Text, nullable=False)
     detected_intent: Mapped[Optional[str]] = mapped_column(
         String(50),
