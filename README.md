@@ -55,26 +55,28 @@ docker-compose up -d
 
 3. **Install dependencies**:
 ```bash
-python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
-pip install -r requirements.txt
+python3 -m venv venv
+./venv/bin/pip install --upgrade pip setuptools wheel
+./venv/bin/pip install -r requirements.txt
 ```
 
 4. **Run migrations**:
 ```bash
-alembic upgrade head
+PYTHONPATH=$PWD ./venv/bin/alembic upgrade head
 ```
 
 5. **Start API**:
 ```bash
-uvicorn src.api.main:app --reload
+PYTHONPATH=$PWD ./venv/bin/uvicorn src.api.main:app --reload --port 8001
 ```
 
 6. **Access**:
-- API: http://localhost:8000
-- Docs: http://localhost:8000/docs
-- Health: http://localhost:8000/health
-- Dashboard: http://localhost:8000/dashboard
+- API: http://localhost:8001
+- Docs: http://localhost:8001/docs
+- Health: http://localhost:8001/health
+- Dashboard: http://localhost:8001/dashboard
+
+**Note**: Custom ports used (PostgreSQL: 5435, Redis: 6381, API: 8001)
 
 ## 🧪 Testing
 

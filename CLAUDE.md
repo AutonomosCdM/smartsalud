@@ -173,21 +173,34 @@ message_body, detected_intent, confidence_score, twilio_message_sid (unique), cr
 # Start infrastructure (PostgreSQL + Redis)
 cd docker && docker-compose up -d postgres redis
 
-# Install dependencies (Python 3.11+)
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
+# Install dependencies (Python 3.13+)
+python3 -m venv venv
+./venv/bin/pip install --upgrade pip setuptools wheel
+./venv/bin/pip install -r requirements.txt
 
 # Setup environment
 cp .env.example .env
-# Edit .env with actual credentials
+# Edit .env with actual credentials (use dummy values for testing)
 
-# Run migrations
-alembic upgrade head
+# Run migrations (requires PYTHONPATH)
+PYTHONPATH=$PWD ./venv/bin/alembic upgrade head
 
 # Start API (with hot reload)
-uvicorn src.api.main:app --reload
+PYTHONPATH=$PWD ./venv/bin/uvicorn src.api.main:app --reload --port 8001
 ```
+
+**Important Notes:**
+- **Custom Ports** (to avoid conflicts with other services):
+  - PostgreSQL: **5435** (not 5432)
+  - Redis: **6381** (not 6379)
+  - API: **8001** (not 8000)
+- **PYTHONPATH Required**: Alembic and uvicorn need `PYTHONPATH=$PWD` to find src module
+- **Python 3.13+**: All dependencies updated for latest Python compatibility
+
+**Access URLs:**
+- API Root: http://localhost:8001/
+- API Docs: http://localhost:8001/docs
+- Health Check: http://localhost:8001/health
 
 ### Testing
 
