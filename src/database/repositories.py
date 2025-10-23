@@ -139,6 +139,41 @@ class AppointmentRepository:
         result = await self.session.execute(stmt)
         return result.scalars().first()
 
+    async def get_recently_cancelled_for_patient(
+        self,
+        patient_id: int,
+        hours: int = 24
+    ) -> Optional[Appointment]:
+        """
+        Get most recent cancelled appointment for a patient within time window.
+
+        Used to validate reschedule button interactions - ensures user
+        can only reschedule if they just cancelled an appointment.
+
+        Args:
+            patient_id: Patient ID
+            hours: How many hours back to look (default: 24)
+
+        Returns:
+            Most recent cancelled appointment if found, None otherwise
+        """
+        from datetime import timedelta
+        cutoff_time = datetime.utcnow() - timedelta(hours=hours)
+
+        stmt = (
+            select(Appointment)
+            .where(
+                and_(
+                    Appointment.patient_id == patient_id,
+                    Appointment.status == AppointmentStatus.CANCELLED,
+                    Appointment.updated_at >= cutoff_time
+                )
+            )
+            .order_by(Appointment.updated_at.desc())
+        )
+        result = await self.session.execute(stmt)
+        return result.scalars().first()
+
     async def get_pending_appointments(
         self,
         start_date: datetime,
