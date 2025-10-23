@@ -5,6 +5,7 @@ Clean architecture with modular routing.
 """
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 import structlog
 
@@ -74,6 +75,18 @@ app = FastAPI(
     redoc_url="/redoc" if settings.app_env != "production" else None
 )
 
+# Configure CORS for frontend
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 # Global exception handler
 @app.exception_handler(SmartSaludException)
@@ -125,13 +138,17 @@ async def root():
 
 # Router imports
 from src.whatsapp.routes import router as whatsapp_router
+from src.api.appointments import router as appointments_router
+from src.api.doctors import router as doctors_router
+from src.api.patients import router as patients_router
+from src.api.stats import router as stats_router
 
 # Register routers
 app.include_router(whatsapp_router)
-
-# Additional routers will be added here as modules are built:
-# from src.monitoring.dashboard import router as monitoring_router
-# app.include_router(monitoring_router)
+app.include_router(appointments_router)
+app.include_router(doctors_router)
+app.include_router(patients_router)
+app.include_router(stats_router, prefix="/api")
 
 
 if __name__ == "__main__":

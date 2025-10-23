@@ -155,7 +155,7 @@ async def create_appointment(
     
     try:
         # Create appointment via BookingService (handles overlap detection + calendar sync)
-        appointment = await booking_service.create_appointment(
+        appointment = await booking_service.book_appointment(
             patient_id=appointment_data.patient_id,
             doctor_id=appointment_data.doctor_id,
             appointment_type_id=appointment_data.appointment_type_id,
