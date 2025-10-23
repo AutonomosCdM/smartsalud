@@ -2,25 +2,16 @@
 Pytest configuration and shared fixtures.
 """
 import pytest
+import pytest_asyncio
 import asyncio
-from typing import AsyncGenerator, Generator
+from typing import AsyncGenerator
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 
 from src.core.config import settings
 from src.database.models import Base
 
 
-@pytest.fixture(scope="session")
-def event_loop() -> Generator:
-    """
-    Create an instance of the event loop for the test session.
-    """
-    loop = asyncio.get_event_loop_policy().new_event_loop()
-    yield loop
-    loop.close()
-
-
-@pytest.fixture(scope="session")
+@pytest_asyncio.fixture(scope="session")
 async def test_engine():
     """
     Create test database engine.
@@ -30,7 +21,7 @@ async def test_engine():
     """
     engine = create_async_engine(
         settings.database_url,
-        echo=True,
+        echo=False,  # Disable echo for cleaner test output
         pool_pre_ping=True
     )
 
@@ -47,7 +38,7 @@ async def test_engine():
     await engine.dispose()
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def db_session(test_engine) -> AsyncGenerator[AsyncSession, None]:
     """
     Create a fresh database session for each test.

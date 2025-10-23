@@ -123,11 +123,14 @@ async def root():
     }
 
 
-# Router imports will be added here as modules are built:
-# from src.whatsapp.routes import router as whatsapp_router
+# Router imports
+from src.whatsapp.routes import router as whatsapp_router
+
+# Register routers
+app.include_router(whatsapp_router)
+
+# Additional routers will be added here as modules are built:
 # from src.monitoring.dashboard import router as monitoring_router
-#
-# app.include_router(whatsapp_router)
 # app.include_router(monitoring_router)
 
 

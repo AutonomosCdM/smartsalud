@@ -26,14 +26,15 @@ CESFAM Futrono"""
 
 def cancellation_message(
     patient_name: str,
-    appointment_date: str
+    appointment_date: str,
+    doctor_name: str
 ) -> str:
     """Message sent when appointment is cancelled."""
     return f"""❌ Cita CANCELADA
 
 Hola {patient_name},
 
-Tu cita del {appointment_date} ha sido cancelada.
+Tu cita del {appointment_date} con {doctor_name} ha sido cancelada.
 
 Para reagendar, comunícate con nosotros al teléfono del CESFAM.
 
@@ -79,5 +80,16 @@ def no_appointment_message() -> str:
 No tenemos citas pendientes registradas para este número.
 
 Si necesitas ayuda, comunícate con nosotros al teléfono del CESFAM.
+
+CESFAM Futrono"""
+
+
+def patient_not_found_message() -> str:
+    """Message when patient not found in system."""
+    return """ℹ️ Número no registrado
+
+Este número no está registrado en nuestro sistema.
+
+Por favor comunícate con el CESFAM para más información.
 
 CESFAM Futrono"""
