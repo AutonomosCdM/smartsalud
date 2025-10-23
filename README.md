@@ -1,164 +1,71 @@
 # smartSalud_V2
 
-WhatsApp bot for medical appointment confirmations - Clean architecture rebuild.
+WhatsApp appointment system for CESFAM - Booking + Google Calendar sync.
 
-## 🎯 Features
+## Setup (5 minutes)
 
-- ✅ WhatsApp webhook (Twilio)
-- ✅ NLP intent detection (Groq + regex fallback)
-- ✅ CONFIRM/CANCEL appointments
-- ✅ Google Calendar synchronization
-- ✅ Scheduled daily reminders
-- ✅ Monitoring dashboard
-- ✅ Admin REST API
-
-## 🏗️ Architecture
-
-```
-smartSalud_V2/
-├── src/
-│   ├── whatsapp/       # WhatsApp integration
-│   ├── calendar/       # Google Calendar
-│   ├── nlp/            # NLP with Groq
-│   ├── database/       # SQLAlchemy models
-│   ├── scheduler/      # APScheduler tasks
-│   └── monitoring/     # Dashboard
-├── tests/              # Unit + integration tests
-└── docker/             # Docker Compose
-```
-
-See [ARCHITECTURE.md](ARCHITECTURE.md) for detailed documentation.
-
-## 🚀 Quick Start
-
-### Prerequisites
-
-- Python 3.11+
-- Docker & Docker Compose
-- PostgreSQL 15
-- Redis 7
-
-### Local Development
-
-1. **Clone and setup**:
 ```bash
 cd smartSalud_V2
-cp .env.example .env
-# Edit .env with your credentials
-```
+cp .env.example .env  # Edit with your credentials
 
-2. **Start services**:
-```bash
-cd docker
-docker-compose up -d
-```
+# Start services
+cd docker && docker-compose up -d && cd ..
 
-3. **Install dependencies**:
-```bash
+# Install & run migrations
 python3 -m venv venv
-./venv/bin/pip install --upgrade pip setuptools wheel
 ./venv/bin/pip install -r requirements.txt
-```
-
-4. **Run migrations**:
-```bash
 PYTHONPATH=$PWD ./venv/bin/alembic upgrade head
-```
 
-5. **Start API**:
-```bash
+# Start API
 PYTHONPATH=$PWD ./venv/bin/uvicorn src.api.main:app --reload --port 8001
 ```
 
-6. **Access**:
-- API: http://localhost:8001
-- Docs: http://localhost:8001/docs
-- Health: http://localhost:8001/health
-- Dashboard: http://localhost:8001/dashboard
+**Access**: [http://localhost:8001](http://localhost:8001) | Docs: `/docs` | Dashboard: `/dashboard`
 
-**Note**: Custom ports used (PostgreSQL: 5435, Redis: 6381, API: 8001)
+## What It Does
 
-## 🧪 Testing
+- Patient books appointment via WhatsApp (Twilio)
+- NLP detects intent (Groq LLM + fallback regex)
+- System creates appointment in DB
+- Automatically syncs to doctor's Google Calendar
+- Doctor confirms/cancels from calendar or WhatsApp
 
-```bash
-# Unit tests
-pytest tests/unit/ -v
-
-# Integration tests (requires API keys)
-pytest tests/integration/ -v
-
-# Coverage
-pytest --cov=src --cov-report=html
-```
-
-## 📝 Environment Variables
-
-See [.env.example](.env.example) for all required variables:
-
-- `DATABASE_URL`: PostgreSQL connection
-- `REDIS_URL`: Redis connection
-- `GROQ_API_KEY`: Groq API key
-- `TWILIO_ACCOUNT_SID`: Twilio credentials
-- `GOOGLE_CALENDAR_CREDENTIALS_FILE`: OAuth2 token
-
-## 🔧 Development
-
-### Code Quality
+## Key Commands
 
 ```bash
-# Format
-black src/ tests/
+# Tests
+PYTHONPATH=$PWD ./venv/bin/pytest tests/unit/ -v
 
-# Lint
-ruff check src/ tests/
-
-# Type check
-mypy src/
-```
-
-### Database Migrations
-
-```bash
 # Create migration
-alembic revision --autogenerate -m "description"
+PYTHONPATH=$PWD ./venv/bin/alembic revision --autogenerate -m "description"
 
-# Apply migration
-alembic upgrade head
-
-# Rollback
-alembic downgrade -1
+# Format code
+black src/ tests/
+ruff check src/ tests/
 ```
 
-## 📦 Deployment
+## Configuration
 
-### Railway
+Edit `.env` with:
 
-1. Connect GitHub repository
-2. Add environment variables
-3. Deploy automatically on push to main
+- `DATABASE_URL` - PostgreSQL connection
+- `GROQ_API_KEY` - LLM for NLP
+- `TWILIO_ACCOUNT_SID` - WhatsApp bot
+- `GOOGLE_CALENDAR_CREDENTIALS_FILE` - Calendar sync
 
-### Docker
+See `.env.example` for all variables.
 
-```bash
-docker build -t smartsalud-v2 -f docker/Dockerfile .
-docker run -p 8000:8000 --env-file .env smartsalud-v2
-```
+## Reference
 
-## 📊 Monitoring
+- **Development guide**: [.claude/CLAUDE.md](.claude/CLAUDE.md)
+- **Architecture**: [ARCHITECTURE.md](ARCHITECTURE.md)
+- **Performance**: [docs/SCALABILITY_ANALYSIS.md](docs/SCALABILITY_ANALYSIS.md)
 
-- Dashboard: `/dashboard`
-- Health check: `/health`
-- Logs: Structured JSON with structlog
+## Status
 
-## 🤝 Contributing
+✅ Phase 1 complete: Booking + one-way calendar sync working
+⏳ Next: WhatsApp integration, admin dashboard
 
-This is a clean rebuild from scratch. NO code migrated from v1.
-
-## 📄 License
+## License
 
 Proprietary - CESFAM Futrono
-
-## 🔗 Links
-
-- [Architecture Documentation](ARCHITECTURE.md)
-- [API Documentation](http://localhost:8000/docs)
