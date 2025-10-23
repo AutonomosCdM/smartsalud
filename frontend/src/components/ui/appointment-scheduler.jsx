@@ -36,7 +36,9 @@ export function AppointmentScheduler({
     if (dateObj && dateObj.isAvailable) {
       setSelectedDate(date)
       setSelectedTime(null)
-      if (onDateSelect) onDateSelect(date)
+      // Create full Date object with current month/year being viewed
+      const fullDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), date)
+      if (onDateSelect) onDateSelect(fullDate)
     }
   }
 

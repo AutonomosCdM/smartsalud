@@ -14,7 +14,7 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ")
 }
 
-export function FullscreenCalendar({ data = [] }) {
+export function FullscreenCalendar({ data = [], onEventClick }) {
   const today = new Date()
   const [currentDate, setCurrentDate] = useState(today)
 
@@ -150,7 +150,10 @@ export function FullscreenCalendar({ data = [] }) {
                         <a
                           href="#"
                           className="group flex rounded-md p-2 transition-colors hover:bg-gray-100"
-                          onClick={(e) => e.preventDefault()}
+                          onClick={(e) => {
+                            e.preventDefault()
+                            if (onEventClick) onEventClick(event)
+                          }}
                         >
                           <div className="flex-auto truncate text-xs">
                             <p className="font-medium text-gray-900">{event.name}</p>
