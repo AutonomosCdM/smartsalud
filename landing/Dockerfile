@@ -16,6 +16,12 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+# Pass environment variables to build
+ARG NEXT_PUBLIC_ELEVENLABS_API_KEY
+ARG NEXT_PUBLIC_AGENT_ID
+ENV NEXT_PUBLIC_ELEVENLABS_API_KEY=$NEXT_PUBLIC_ELEVENLABS_API_KEY
+ENV NEXT_PUBLIC_AGENT_ID=$NEXT_PUBLIC_AGENT_ID
+
 # Build Next.js
 RUN npm run build
 
