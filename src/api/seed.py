@@ -102,14 +102,44 @@ async def seed_database(db: AsyncSession = Depends(get_db)):
         )
         db.add(patient4)
 
+        # Paciente 5: Cesar Duran (sin cita aún)
+        patient5 = Patient(
+            rut="22334455-6",
+            phone="whatsapp:+56978754779",
+            first_name="Cesar",
+            last_name="Duran",
+            email="cesar.duran@example.com"
+        )
+        db.add(patient5)
+
+        # Paciente 6: Ramon Roa (sin cita aún)
+        patient6 = Patient(
+            rut="33445566-7",
+            phone="whatsapp:+56996645517",
+            first_name="Ramon",
+            last_name="Roa",
+            email="ramon.roa@example.com"
+        )
+        db.add(patient6)
+
+        # Paciente 7: Tamara Aguilera (sin cita aún)
+        patient7 = Patient(
+            rut="44556677-8",
+            phone="whatsapp:+56982467078",
+            first_name="Tamara",
+            last_name="Aguilera",
+            email="tamara.aguilera@example.com"
+        )
+        db.add(patient7)
+
         await db.commit()
 
-        logger.info("seed_database_completed", patients=4, appointments=2)
+        logger.info("seed_database_completed", patients=7, appointments=2)
 
         return {
             "status": "success",
             "message": "Database seeded successfully",
-            "patients_created": 4,
+            "patients_created": 7,
             "appointments_created": 2,
             "data": [
                 {
@@ -130,6 +160,21 @@ async def seed_database(db: AsyncSession = Depends(get_db)):
                 {
                     "patient": f"{patient4.first_name} {patient4.last_name}",
                     "phone": patient4.phone,
+                    "appointment": "Sin cita"
+                },
+                {
+                    "patient": f"{patient5.first_name} {patient5.last_name}",
+                    "phone": patient5.phone,
+                    "appointment": "Sin cita"
+                },
+                {
+                    "patient": f"{patient6.first_name} {patient6.last_name}",
+                    "phone": patient6.phone,
+                    "appointment": "Sin cita"
+                },
+                {
+                    "patient": f"{patient7.first_name} {patient7.last_name}",
+                    "phone": patient7.phone,
                     "appointment": "Sin cita"
                 }
             ]

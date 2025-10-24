@@ -149,6 +149,7 @@ from src.api.doctors import router as doctors_router
 from src.api.patients import router as patients_router
 from src.api.stats import router as stats_router
 from src.api.seed import router as seed_router
+from src.api.add_patients import router as add_patients_router
 from src.elevenlabs.tools import router as elevenlabs_router
 
 # Register routers
@@ -158,6 +159,7 @@ app.include_router(doctors_router)
 app.include_router(patients_router)
 app.include_router(stats_router, prefix="/api")
 app.include_router(seed_router)  # Database seeding (temporary)
+app.include_router(add_patients_router)  # Add additional patients (temporary)
 app.include_router(elevenlabs_router)  # ElevenLabs function calling
 
 
