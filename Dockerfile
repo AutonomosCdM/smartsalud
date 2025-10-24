@@ -3,6 +3,9 @@ FROM python:3.13-slim
 
 WORKDIR /app
 
+# Set PYTHONPATH so Python can find the src module
+ENV PYTHONPATH=/app
+
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     postgresql-client \
