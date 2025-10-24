@@ -18,8 +18,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application code
 COPY . .
 
-# Expose port
-EXPOSE 8001
+# Expose port (Railway will set PORT env var)
+EXPOSE 8080
 
 # Run migrations and start server
-CMD alembic upgrade head && uvicorn src.api.main:app --host 0.0.0.0 --port 8001
+# Railway provides $PORT environment variable
+CMD alembic upgrade head && uvicorn src.api.main:app --host 0.0.0.0 --port ${PORT:-8080}
