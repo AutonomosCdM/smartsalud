@@ -75,7 +75,6 @@ export function VoiceAgent({ isOpen, onClose }: VoiceAgentProps) {
       // Start conversation with ElevenLabs
       await conversation.startSession({
         agentId,
-        connectionType: "webrtc",
         onStatusChange: (status) => {
           console.log("🔄 Estado:", status.status);
           setAgentState(status.status);
