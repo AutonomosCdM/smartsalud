@@ -25,6 +25,7 @@ from src.whatsapp.content_templates import ContentTemplateService
 from src.core.config import get_settings
 
 logger = structlog.get_logger(__name__)
+settings = get_settings()
 
 router = APIRouter(prefix="/api/webhook", tags=["whatsapp"])
 
