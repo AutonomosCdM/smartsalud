@@ -33,7 +33,7 @@ export function VoiceAgent({ isOpen, onClose }: VoiceAgentProps) {
     onMessage: (message) => {
       console.log("📨 Mensaje:", message);
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error("❌ Error:", error);
       setAgentState("disconnected");
       setIsLoading(false);
