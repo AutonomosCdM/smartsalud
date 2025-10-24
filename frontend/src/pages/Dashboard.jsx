@@ -8,7 +8,7 @@ export default function Dashboard() {
   const { data: stats, isLoading: statsLoading } = useQuery({
     queryKey: ['dashboard-stats'],
     queryFn: async () => {
-      const response = await apiClient.get('/api/stats')
+      const response = await apiClient.get('/stats')
       return response.data
     },
   })
@@ -17,7 +17,7 @@ export default function Dashboard() {
   const { data: doctors, isLoading: doctorsLoading } = useQuery({
     queryKey: ['doctors'],
     queryFn: async () => {
-      const response = await apiClient.get('/api/doctors')
+      const response = await apiClient.get('/doctors')
       return response.data
     },
   })
@@ -26,7 +26,7 @@ export default function Dashboard() {
   const { data: patients, isLoading: patientsLoading } = useQuery({
     queryKey: ['patients-dashboard'],
     queryFn: async () => {
-      const response = await apiClient.get('/api/patients?limit=5')
+      const response = await apiClient.get('/patients?limit=5')
       return response.data
     },
   })
@@ -35,7 +35,7 @@ export default function Dashboard() {
   const { data: appointments, isLoading: appointmentsLoading } = useQuery({
     queryKey: ['appointments-dashboard'],
     queryFn: async () => {
-      const response = await apiClient.get('/api/appointments')
+      const response = await apiClient.get('/appointments')
       return response.data
     },
   })
