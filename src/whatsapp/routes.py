@@ -69,6 +69,8 @@ async def whatsapp_webhook(
     )
 
     try:
+        logger.info("webhook_processing_started", from_number=From, has_button=bool(ButtonPayload))
+
         # CRITICAL: Check if this MessageSid was already processed (prevent button loop)
         if ButtonPayload and MessageSid:
             from src.database.repositories import InteractionRepository
@@ -180,6 +182,7 @@ async def whatsapp_webhook(
 
         else:
             # No button - use NLP to detect intent from text
+            logger.info("nlp_detection_starting", from_number=From, message_preview=Body[:50] if Body else None)
             nlp_service = NLPService()
             intent_result = await nlp_service.detect_intent(Body)
             intent = intent_result.intent
@@ -226,8 +229,12 @@ async def whatsapp_webhook(
         logger.info(
             "webhook_processed_successfully",
             from_number=From,
-            action=handler_response.action.value
+            action=handler_response.action.value if handler_response else "None"
         )
+
+        if not handler_response:
+            logger.error("handler_response_is_none", from_number=From)
+            raise ValueError("Handler returned None response")
 
         # Process HandlerResponse based on its action
         content_service = ContentTemplateService()
@@ -298,12 +305,18 @@ async def whatsapp_webhook(
             return twiml
 
     except Exception as e:
+        import traceback
+        error_details = traceback.format_exc()
         logger.error(
             "webhook_processing_failed",
             from_number=From,
             error=str(e),
+            error_type=type(e).__name__,
             exc_info=True
         )
+        # Also print to stdout for Railway logs visibility
+        print(f"❌ WEBHOOK ERROR for {From}: {type(e).__name__}: {str(e)}")
+        print(f"Stack trace:\n{error_details}")
 
         # Return generic error message
         error_message = """❌ Error al procesar tu mensaje
