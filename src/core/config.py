@@ -93,12 +93,14 @@ class Settings(BaseSettings):
     enable_dashboard: bool = Field(default=True)
     dashboard_path: str = Field(default="/dashboard")
 
-    @field_validator("database_url")
+    @field_validator("database_url", mode="before")
     @classmethod
     def validate_database_url(cls, v: str) -> str:
-        """Ensure async driver is used."""
-        if "+asyncpg" not in v:
-            raise ValueError("Database URL must use asyncpg driver (postgresql+asyncpg://...)")
+        """Convert standard postgresql:// to asyncpg driver."""
+        if isinstance(v, str) and v.startswith("postgresql://"):
+            v = v.replace("postgresql://", "postgresql+asyncpg://", 1)
+        elif isinstance(v, str) and "+asyncpg" not in v:
+            raise ValueError("Database URL must use asyncpg driver")
         return v
 
 
