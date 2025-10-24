@@ -23,13 +23,13 @@ class CalendarColor(str, Enum):
     TOMATO = "11"
 
 
-# Status to color mapping
+# Status to color mapping - Colores pasteles suaves
 STATUS_COLOR_MAP = {
-    "PENDING": CalendarColor.BANANA,      # Yellow - awaiting response
-    "CONFIRMED": CalendarColor.BASIL,     # Green - confirmed
-    "CANCELLED": CalendarColor.TOMATO,    # Red - cancelled
-    "COMPLETED": CalendarColor.GRAPHITE,  # Gray - past appointment
-    "NO_SHOW": CalendarColor.FLAMINGO,    # Pink - didn't attend
+    "PENDING": CalendarColor.LAVENDER,    # Lavanda suave - awaiting response
+    "CONFIRMED": CalendarColor.SAGE,      # Verde salvia suave - confirmed
+    "CANCELLED": CalendarColor.FLAMINGO,  # Rosa coral suave - cancelled
+    "COMPLETED": CalendarColor.PEACOCK,   # Azul turquesa suave - past appointment
+    "NO_SHOW": CalendarColor.GRAPE,       # Morado pastel - didn't attend
 }
 
 

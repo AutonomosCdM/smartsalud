@@ -156,6 +156,16 @@ async def whatsapp_webhook(
                     message_sid=MessageSid
                 )
 
+            elif ButtonPayload == "SLOT_3":
+                logger.info("button_slot3_pressed", from_number=From)
+                handler_response = await handle_timeslot_selection(
+                    phone=From,
+                    message=Body or ButtonText or "Opción 3",
+                    slot_number=3,
+                    db=db,
+                    message_sid=MessageSid
+                )
+
             else:
                 logger.warning("unknown_button_payload", from_number=From, button_payload=ButtonPayload)
                 response_message = await handle_unknown(

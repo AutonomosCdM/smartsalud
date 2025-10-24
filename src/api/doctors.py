@@ -23,7 +23,7 @@ class DoctorResponse(BaseModel):
     name: str
     sector: str
     specialty: str
-    calendar_email: str
+    calendar_email: str | None
 
     class Config:
         from_attributes = True

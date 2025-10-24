@@ -371,7 +371,7 @@ CESFAM Futrono"""
             Content SID of the created template
 
         Note:
-            Template includes 2 quick reply buttons for available time slots
+            Template includes 3 quick reply buttons for available time slots
         """
         try:
             url = f"https://content.twilio.com/v1/Content"
@@ -382,11 +382,12 @@ CESFAM Futrono"""
                 "variables": {
                     "1": "Nombre del paciente",
                     "2": "Opción 1 de horario",
-                    "3": "Opción 2 de horario"
+                    "3": "Opción 2 de horario",
+                    "4": "Opción 3 de horario"
                 },
                 "types": {
                     "twilio/quick-reply": {
-                        "body": "Perfecto, {{1}}! 📅\n\nElige tu nuevo horario:\n\n📍 Opción 1: {{2}}\n📍 Opción 2: {{3}}",
+                        "body": "Perfecto, {{1}}! 📅\n\nElige tu nuevo horario:\n\n📍 Opción 1: {{2}}\n📍 Opción 2: {{3}}\n📍 Opción 3: {{4}}",
                         "actions": [
                             {
                                 "id": "SLOT_1",
@@ -395,6 +396,10 @@ CESFAM Futrono"""
                             {
                                 "id": "SLOT_2",
                                 "title": "📅 Opción 2"
+                            },
+                            {
+                                "id": "SLOT_3",
+                                "title": "📅 Opción 3"
                             }
                         ]
                     }
@@ -447,7 +452,7 @@ CESFAM Futrono"""
         Args:
             to: Recipient WhatsApp number
             patient_name: Patient's first name
-            slots: List of slot dictionaries with 'display' keys
+            slots: List of slot dictionaries with 'display' keys (expects 3 slots)
             content_sid: Optional Content SID (creates new if not provided)
 
         Returns:
@@ -461,11 +466,13 @@ CESFAM Futrono"""
             # Extract display values from slots
             slot1_display = slots[0]["display"] if len(slots) > 0 else "No disponible"
             slot2_display = slots[1]["display"] if len(slots) > 1 else "No disponible"
+            slot3_display = slots[2]["display"] if len(slots) > 2 else "No disponible"
 
             content_variables = {
                 "1": patient_name,
                 "2": slot1_display,
-                "3": slot2_display
+                "3": slot2_display,
+                "4": slot3_display
             }
 
             message = self.client.messages.create(
@@ -480,7 +487,8 @@ CESFAM Futrono"""
                 message_sid=message.sid,
                 to=to,
                 slot1=slot1_display,
-                slot2=slot2_display
+                slot2=slot2_display,
+                slot3=slot3_display
             )
 
             return message.sid

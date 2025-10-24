@@ -30,8 +30,8 @@ def get_engine() -> AsyncEngine:
     Configuration:
     - pool_pre_ping: Verify connections before use (Railway safety)
     - pool_recycle: Recycle connections after 1 hour
-    - pool_size: 10 base connections
-    - max_overflow: 5 additional connections under load
+    - pool_size: 20 base connections (optimized for 20K patients / 200 doctors)
+    - max_overflow: 30 additional connections under load
     """
     global engine
 
@@ -45,11 +45,14 @@ def get_engine() -> AsyncEngine:
             )
         else:
             # Development/Production with connection pooling
+            # Optimized for 20K patients / 200 doctors
+            # Formula: (requests_per_second × avg_query_time) × 2
+            # = (8 × 0.1) × 2 = 16 → rounded to 20
             engine = create_async_engine(
                 settings.database_url,
                 echo=(settings.app_env == "development"),
-                pool_size=10,
-                max_overflow=5,
+                pool_size=20,        # Base connections (increased from 10)
+                max_overflow=30,     # Additional under load (increased from 5)
                 pool_pre_ping=True,  # Verify connections before use
                 pool_recycle=3600,   # Recycle after 1 hour
             )

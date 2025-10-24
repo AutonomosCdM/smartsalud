@@ -303,13 +303,14 @@ async def handle_yes_reschedule(
         message_sid=message_sid
     )
 
-    # Generate 2 available time slots
+    # Generate 3 available time slots
     # TODO: In the future, fetch these from an availability system
     from datetime import datetime, timedelta
 
-    # Generate slots for tomorrow and day after tomorrow
+    # Generate slots for different days and times
     tomorrow = datetime.now() + timedelta(days=1)
     day_after = datetime.now() + timedelta(days=2)
+    three_days = datetime.now() + timedelta(days=3)
 
     # Slot 1: Tomorrow at 10:00
     slot1_date = tomorrow.replace(hour=10, minute=0, second=0, microsecond=0)
@@ -321,16 +322,23 @@ async def handle_yes_reschedule(
     slot2_id = f"SLOT_{slot2_date.strftime('%Y%m%d_%H%M')}"
     slot2_display = slot2_date.strftime("%d/%m/%Y a las %H:%M")
 
+    # Slot 3: Three days from now at 11:30
+    slot3_date = three_days.replace(hour=11, minute=30, second=0, microsecond=0)
+    slot3_id = f"SLOT_{slot3_date.strftime('%Y%m%d_%H%M')}"
+    slot3_display = slot3_date.strftime("%d/%m/%Y a las %H:%M")
+
     slots = [
         {"id": slot1_id, "display": slot1_display, "datetime": slot1_date},
-        {"id": slot2_id, "display": slot2_display, "datetime": slot2_date}
+        {"id": slot2_id, "display": slot2_display, "datetime": slot2_date},
+        {"id": slot3_id, "display": slot3_display, "datetime": slot3_date}
     ]
 
     logger.info(
         "timeslots_generated",
         patient_id=patient.id,
         slot1=slot1_display,
-        slot2=slot2_display
+        slot2=slot2_display,
+        slot3=slot3_display
     )
 
     return HandlerResponse.timeslot_options(
@@ -405,14 +413,23 @@ async def handle_timeslot_selection(
     # Regenerate slots using same logic as handle_yes_reschedule
     tomorrow = datetime.now() + timedelta(days=1)
     day_after = datetime.now() + timedelta(days=2)
+    three_days = datetime.now() + timedelta(days=3)
 
     # Slot 1: Tomorrow at 10:00
     slot1_date = tomorrow.replace(hour=10, minute=0, second=0, microsecond=0)
     # Slot 2: Day after tomorrow at 15:00
     slot2_date = day_after.replace(hour=15, minute=0, second=0, microsecond=0)
+    # Slot 3: Three days from now at 11:30
+    slot3_date = three_days.replace(hour=11, minute=30, second=0, microsecond=0)
 
     # Select the chosen slot
-    selected_date = slot1_date if slot_number == 1 else slot2_date
+    if slot_number == 1:
+        selected_date = slot1_date
+    elif slot_number == 2:
+        selected_date = slot2_date
+    else:  # slot_number == 3
+        selected_date = slot3_date
+
     selected_display = selected_date.strftime("%d/%m/%Y a las %H:%M")
 
     # Create new appointment with selected timeslot
@@ -424,6 +441,32 @@ async def handle_timeslot_selection(
         status=AppointmentStatus.PENDING
     )
     await db.commit()
+
+    # Create event in Google Calendar
+    calendar_service = CalendarService()
+    if calendar_service.service:  # Only if calendar is configured
+        end_time = selected_date + timedelta(minutes=30)
+
+        event_id = await calendar_service.create_event(
+            summary=f"Cita - {patient.first_name} {patient.last_name}",
+            start_time=selected_date,
+            end_time=end_time,
+            description=f"📋 Paciente: {patient.first_name} {patient.last_name}\n"
+                       f"👨‍⚕️ Doctor: {new_appointment.doctor_name}\n"
+                       f"🏥 Especialidad: {new_appointment.specialty}\n"
+                       f"📞 Teléfono: {patient.phone}",
+            status="PENDING"
+        )
+
+        # Save event_id in appointment
+        if event_id:
+            new_appointment.calendar_event_id = event_id
+            await db.commit()
+            logger.info(
+                "calendar_event_created_for_appointment",
+                appointment_id=new_appointment.id,
+                event_id=event_id
+            )
 
     logger.info(
         "appointment_rescheduled",
