@@ -74,3 +74,8 @@ frontend/dist/
 frontend/dist-ssr/
 frontend/.vite/
 frontend/*.local
+
+# Landing (Next.js)
+landing/node_modules/
+landing/.next/
+landing/*.local
