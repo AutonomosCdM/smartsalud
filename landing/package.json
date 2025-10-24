@@ -11,10 +11,8 @@
     "components:add": "npx @elevenlabs/agents-cli@latest components add"
   },
   "dependencies": {
-    "@elevenlabs/client": "^0.8.1",
-    "@elevenlabs/react": "^0.1.7",
+    "@elevenlabs/react": "^0.3.0",
     "clsx": "^2.1.0",
-    "elevenlabs": "^1.15.0",
     "lucide-react": "^0.344.0",
     "next": "^14.2.0",
     "react": "^18.3.0",
