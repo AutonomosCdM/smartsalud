@@ -112,3 +112,7 @@ def get_settings() -> Settings:
     if _settings is None:
         _settings = Settings()
     return _settings
+
+
+# Instance for direct import (backward compatibility)
+settings = get_settings()
