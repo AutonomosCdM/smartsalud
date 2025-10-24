@@ -9,20 +9,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 import structlog
 
-from src.core.config import settings
+from src.core.config import get_settings
 from src.core.exceptions import SmartSaludException
 from src.database.connection import init_db, close_db, get_engine
-
-# Configure structured logging
-structlog.configure(
-    processors=[
-        structlog.processors.TimeStamper(fmt="iso"),
-        structlog.processors.StackInfoRenderer(),
-        structlog.dev.ConsoleRenderer() if settings.app_env == "development"
-        else structlog.processors.JSONRenderer()
-    ],
-    logger_factory=structlog.PrintLoggerFactory(),
-)
 
 logger = structlog.get_logger(__name__)
 
@@ -33,6 +22,7 @@ async def lifespan(app: FastAPI):
     Application lifespan manager.
 
     Startup:
+    - Configure logging
     - Initialize database connection
     - Create tables (dev only)
     - Log application start
@@ -41,6 +31,20 @@ async def lifespan(app: FastAPI):
     - Close database connections
     - Log application shutdown
     """
+    # Get settings
+    settings = get_settings()
+
+    # Configure structured logging
+    structlog.configure(
+        processors=[
+            structlog.processors.TimeStamper(fmt="iso"),
+            structlog.processors.StackInfoRenderer(),
+            structlog.dev.ConsoleRenderer() if settings.app_env == "development"
+            else structlog.processors.JSONRenderer()
+        ],
+        logger_factory=structlog.PrintLoggerFactory(),
+    )
+
     # Startup
     logger.info(
         "application_starting",
@@ -67,12 +71,12 @@ async def lifespan(app: FastAPI):
 
 # Create FastAPI app
 app = FastAPI(
-    title=settings.app_name,
+    title="smartSalud_V2",
     description="WhatsApp bot for medical appointment confirmations",
     version="2.0.0",
     lifespan=lifespan,
-    docs_url="/docs" if settings.app_env != "production" else None,
-    redoc_url="/redoc" if settings.app_env != "production" else None
+    docs_url="/docs",
+    redoc_url="/redoc"
 )
 
 # Configure CORS for frontend
@@ -116,6 +120,7 @@ async def health_check():
     Returns application status and configuration.
     Used by Railway and monitoring systems.
     """
+    settings = get_settings()
     return {
         "status": "healthy",
         "app_name": settings.app_name,
@@ -128,6 +133,7 @@ async def health_check():
 @app.get("/")
 async def root():
     """Root endpoint with basic info."""
+    settings = get_settings()
     return {
         "message": "smartSalud_V2 API",
         "version": "2.0.0",
@@ -155,6 +161,7 @@ app.include_router(elevenlabs_router)  # ElevenLabs function calling
 
 if __name__ == "__main__":
     import uvicorn
+    settings = get_settings()
     uvicorn.run(
         "src.api.main:app",
         host="0.0.0.0",

@@ -27,6 +27,10 @@ wheels/
 .env
 .env.local
 .env.*.local
+RAILWAY_ENV_VARS.txt
+
+# Temporary scripts
+create_template.py
 
 # IDEs
 .vscode/

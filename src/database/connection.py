@@ -13,7 +13,7 @@ from sqlalchemy.pool import NullPool
 from typing import AsyncGenerator
 import structlog
 
-from src.core.config import settings
+from src.core.config import get_settings
 from src.database.models import Base
 
 logger = structlog.get_logger(__name__)
@@ -36,6 +36,7 @@ def get_engine() -> AsyncEngine:
     global engine
 
     if engine is None:
+        settings = get_settings()
         # Test environment uses NullPool (no connection pooling)
         if settings.app_env == "test":
             engine = create_async_engine(

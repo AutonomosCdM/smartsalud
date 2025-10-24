@@ -102,5 +102,13 @@ class Settings(BaseSettings):
         return v
 
 
-# Global settings instance
-settings = Settings()
+# Global settings instance (lazy loaded)
+_settings: Settings | None = None
+
+
+def get_settings() -> Settings:
+    """Get settings instance (lazy loaded)."""
+    global _settings
+    if _settings is None:
+        _settings = Settings()
+    return _settings

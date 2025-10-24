@@ -8,7 +8,7 @@ import json
 import requests
 from twilio.rest import Client
 import structlog
-from src.core.config import settings
+from src.core.config import get_settings
 
 logger = structlog.get_logger(__name__)
 
@@ -18,7 +18,11 @@ class ContentTemplateService:
 
     def __init__(self):
         """Initialize Twilio client."""
-        self.client = Client(settings.twilio_account_sid, settings.twilio_auth_token)
+        settings = get_settings()
+        self.client = Client(self.twilio_account_sid, self.twilio_auth_token)
+        self.twilio_account_sid = self.twilio_account_sid
+        self.twilio_auth_token = self.twilio_auth_token
+        self.twilio_whatsapp_number = self.twilio_whatsapp_number
 
     def create_appointment_reminder_template(self) -> str:
         """
@@ -67,7 +71,7 @@ class ContentTemplateService:
             # Make API request with Basic Auth
             response = requests.post(
                 url,
-                auth=(settings.twilio_account_sid, settings.twilio_auth_token),
+                auth=(self.twilio_account_sid, self.twilio_auth_token),
                 headers={"Content-Type": "application/json"},
                 data=json.dumps(payload)
             )
@@ -133,7 +137,7 @@ class ContentTemplateService:
 
             # Send message with content template
             message = self.client.messages.create(
-                from_=settings.twilio_whatsapp_number,
+                from_=self.twilio_whatsapp_number,
                 to=to,
                 content_sid=content_sid,
                 content_variables=json.dumps(content_variables)  # Must be JSON string
@@ -209,7 +213,7 @@ class ContentTemplateService:
 
             response = requests.post(
                 url,
-                auth=(settings.twilio_account_sid, settings.twilio_auth_token),
+                auth=(self.twilio_account_sid, self.twilio_auth_token),
                 headers={"Content-Type": "application/json"},
                 data=json.dumps(payload)
             )
@@ -267,7 +271,7 @@ class ContentTemplateService:
             }
 
             message = self.client.messages.create(
-                from_=settings.twilio_whatsapp_number,
+                from_=self.twilio_whatsapp_number,
                 to=to,
                 content_sid=content_sid,
                 content_variables=json.dumps(content_variables)
@@ -308,7 +312,7 @@ Si necesitas algo más, no dudes en contactarnos.
 CESFAM Futrono"""
 
             message = self.client.messages.create(
-                from_=settings.twilio_whatsapp_number,
+                from_=self.twilio_whatsapp_number,
                 to=to,
                 body=goodbye_text
             )
@@ -408,7 +412,7 @@ CESFAM Futrono"""
 
             response = requests.post(
                 url,
-                auth=(settings.twilio_account_sid, settings.twilio_auth_token),
+                auth=(self.twilio_account_sid, self.twilio_auth_token),
                 headers={"Content-Type": "application/json"},
                 data=json.dumps(payload)
             )
@@ -476,7 +480,7 @@ CESFAM Futrono"""
             }
 
             message = self.client.messages.create(
-                from_=settings.twilio_whatsapp_number,
+                from_=self.twilio_whatsapp_number,
                 to=to,
                 content_sid=content_sid,
                 content_variables=json.dumps(content_variables)

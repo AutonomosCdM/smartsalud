@@ -5,13 +5,14 @@ Handles sending WhatsApp messages via Twilio.
 """
 from twilio.rest import Client
 
-from src.core.config import settings
+from src.core.config import get_settings
 
 
 class TwilioService:
     """Twilio WhatsApp service."""
 
     def __init__(self):
+        settings = get_settings()
         self.client = Client(
             settings.twilio_account_sid,
             settings.twilio_auth_token

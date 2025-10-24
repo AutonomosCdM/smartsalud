@@ -10,7 +10,7 @@ from sqlalchemy import select, func
 
 from src.api.dependencies import get_db
 from src.database.models import Interaction, Appointment
-from src.core.config import settings
+from src.core.config import get_settings
 
 router = APIRouter(tags=["monitoring"])
 

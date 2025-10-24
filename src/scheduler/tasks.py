@@ -7,7 +7,7 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 import structlog
 
-from src.core.config import settings
+from src.core.config import get_settings
 from src.scheduler.reminders import send_daily_reminders
 
 logger = structlog.get_logger(__name__)

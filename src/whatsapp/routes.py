@@ -22,7 +22,7 @@ from src.whatsapp.handlers import (
 )
 from src.whatsapp.response_types import HandlerResponse, ResponseAction
 from src.whatsapp.content_templates import ContentTemplateService
-from src.core.config import settings
+from src.core.config import get_settings
 
 logger = structlog.get_logger(__name__)
 

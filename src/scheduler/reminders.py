@@ -6,7 +6,7 @@ Finds pending appointments and sends WhatsApp reminders.
 from datetime import datetime, timedelta
 import structlog
 
-from src.core.config import settings
+from src.core.config import get_settings
 from src.database.connection import get_session
 from src.database.models import Appointment, Patient
 from src.whatsapp.service import TwilioService

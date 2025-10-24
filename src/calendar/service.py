@@ -13,7 +13,7 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 import structlog
 
-from src.core.config import settings
+from src.core.config import get_settings
 from src.calendar.colors import get_color_for_status
 
 logger = structlog.get_logger(__name__)
@@ -44,6 +44,7 @@ class CalendarService:
             Credentials object if available, None otherwise
         """
         try:
+            settings = get_settings()
             # Get project root
             project_root = Path(__file__).parent.parent.parent
             token_file = project_root / settings.google_calendar_credentials_file

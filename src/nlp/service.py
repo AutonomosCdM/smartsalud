@@ -12,7 +12,7 @@ from typing import Optional
 from groq import AsyncGroq
 import structlog
 
-from src.core.config import settings
+from src.core.config import get_settings
 from src.nlp.intents import Intent, IntentResult
 from src.nlp.patterns import detect_intent_regex
 
@@ -68,8 +68,11 @@ class NLPService:
     """NLP service with Groq API and fallback."""
 
     def __init__(self):
+        settings = get_settings()
         self.groq_client = AsyncGroq(api_key=settings.groq_api_key)
         self.circuit_breaker = CircuitBreaker()
+        self.groq_model = settings.groq_model
+        self.groq_timeout = settings.groq_timeout
 
     async def detect_intent(self, message: str) -> IntentResult:
         """
@@ -116,12 +119,12 @@ Respuesta:"""
 
         response = await asyncio.wait_for(
             self.groq_client.chat.completions.create(
-                model=settings.groq_model,
+                model=self.groq_model,
                 messages=[{"role": "user", "content": prompt}],
                 temperature=0.1,
                 max_tokens=10
             ),
-            timeout=settings.groq_timeout
+            timeout=self.groq_timeout
         )
 
         content = response.choices[0].message.content.strip().upper()
