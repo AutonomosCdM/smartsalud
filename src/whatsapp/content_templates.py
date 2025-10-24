@@ -19,10 +19,10 @@ class ContentTemplateService:
     def __init__(self):
         """Initialize Twilio client."""
         settings = get_settings()
+        self.twilio_account_sid = settings.twilio_account_sid
+        self.twilio_auth_token = settings.twilio_auth_token
+        self.twilio_whatsapp_number = settings.twilio_whatsapp_number
         self.client = Client(self.twilio_account_sid, self.twilio_auth_token)
-        self.twilio_account_sid = self.twilio_account_sid
-        self.twilio_auth_token = self.twilio_auth_token
-        self.twilio_whatsapp_number = self.twilio_whatsapp_number
 
     def create_appointment_reminder_template(self) -> str:
         """
