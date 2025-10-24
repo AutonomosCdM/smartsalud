@@ -75,10 +75,6 @@ export function VoiceAgent({ isOpen, onClose }: VoiceAgentProps) {
       // Start conversation with ElevenLabs
       await conversation.startSession({
         agentId,
-        onStatusChange: (status) => {
-          console.log("🔄 Estado:", status.status);
-          setAgentState(status.status);
-        },
       });
     } catch (err: any) {
       console.error("Error connecting:", err);
